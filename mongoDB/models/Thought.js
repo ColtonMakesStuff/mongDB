@@ -65,7 +65,8 @@ Thought.createThought = async function(req, res) {
 //delete thought
 Thought.deleteThought = async function(req, res) {
     try {
-        const thought = await Thought.findByIdAndDelete(req.params.id);
+        const thoughtId = req.body.thoughtId;
+        const thought = await Thought.findByIdAndDelete(thoughtId);
         res.status(200).json(thought);
     } catch (err) {
         res.status(500).json({ error: `Error deleting thought${err}` });
@@ -89,30 +90,25 @@ Thought.createReaction = async function(req, res) {
 //delete reaction
 Thought.deleteReaction = async function(req, res) {
     try {
-        const thoughtId = req.params.thoughtId;
-        const reactionId = req.params.reactionId;
+        const thoughtId = req.body.thoughtId;
+        const reactionId = req.body.reactionId;
 
-        const thought = await Thought.findById(thoughtId);
+        const thought = await Thought.findOneAndUpdate(
+          { _id: thoughtId },
+          { $pull: { reactions: { reactionId: reactionId } } },
+          { new: true }
+        );
 
         if (!thought) {
             return res.status(404).json({ error: 'thought not found' });
         }
-
-        const reactionIndex = Thought.reactions.findIndex(reaction => reaction.reactionId.toString() === reactionId);
-
-        if (reactionIndex === -1) {
-            return res.status(404).json({ error: 'reaction not found' });
-        }
-
-        Thought.reactions.splice(reactionIndex, 1);
-
-        await Thought.save();
 
         res.status(200).json({ message: 'reaction deleted' });
     } catch (err) {
         res.status(500).json({ error: `Error deleting reaction: ${err}` });
     }
 };
+
 
 
 //get all reactions

@@ -9,7 +9,7 @@ router.route('/thoughts')
   .post(async (req, res) => { await Thought.createThought(req, res); })
   .get(async (req, res) => { await Thought.getAllThoughts(req, res); });
 
-router.route('/thoughts/:id')
+router.route('/thoughts/')
   .get(async (req, res) => { await Thought.getThoughtById(req, res); })
   .put(async (req, res) => { await Thought.updateThought(req, res); })
   .delete(async (req, res) => { await Thought.deleteThought(req, res); });
@@ -19,7 +19,7 @@ router.route('/reactions')
   .put(async (req, res) => { await Thought.createReaction(req, res); })
   .get(async (req, res) => { await Thought.getAllReactions(req, res); });
 
-router.route('/reactions/:id')
+router.route('/reactions/')
   .delete(async (req, res) => { await Thought.deleteReaction(req, res); });
 
 // User routes
